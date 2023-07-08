@@ -1,5 +1,9 @@
 add_executable(game
   "main.cpp"
+  "Level.cpp"
+  "LevelFactory.cpp"
+  "Obstacle.cpp"
+  "ObstaclesDrawer.cpp"
 )
 
 find_package(fmt CONFIG REQUIRED)

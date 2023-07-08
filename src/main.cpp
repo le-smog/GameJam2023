@@ -3,7 +3,15 @@
 #include <SDL2/SDL.h>
 #include <spdlog/spdlog.h>
 
+#include "LevelFactory.hpp"
+#include "ObstaclesDrawer.hpp"
+
 int main(int, char **) {
+
+  LevelFactory level_factory = LevelFactory("levels");
+
+  Level test = level_factory.make_level("level1");
+
   static constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO;
   if (SDL_Init(INIT_FLAGS) < 0) {
     spdlog::error("Unable to init SDL: {}", SDL_GetError());
@@ -21,6 +29,8 @@ int main(int, char **) {
     return 1;
   }
 
+  ObstaclesDrawer obstacle_drawer = ObstaclesDrawer(renderer);
+
   bool should_continue = true;
   while (should_continue) {
     SDL_Event ev;
@@ -35,9 +45,7 @@ int main(int, char **) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-    static constexpr SDL_Rect rect{30, 40, 200, 300};
-    SDL_RenderDrawRect(renderer, &rect);
+    obstacle_drawer.drawObstacle(test.getObstacles());
 
     SDL_RenderPresent(renderer);
   }
