@@ -26,3 +26,24 @@ add_custom_command(
   "${CMAKE_CURRENT_BINARY_DIR}/levels"
   COMMENT "Copying levels to build directory"
 )
+
+if(WIN32 AND NOT VCPKG_TOOLCHAIN AND NOT CMAKE_CROSSCOMPILING)
+  install(
+    TARGETS game
+    RUNTIME_DEPENDENCIES
+    PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+    DIRECTORIES $<TARGET_FILE_DIR:${TARGET}> $ENV{PATH}
+    RUNTIME DESTINATION "."
+  )
+else()
+  install(
+    TARGETS game
+    RUNTIME DESTINATION "."
+  )
+endif()
+
+install(
+  DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/levels"
+  DESTINATION "."
+)
