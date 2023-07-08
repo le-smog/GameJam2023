@@ -30,8 +30,10 @@ Level LevelFactory::make_level(std::string_view level_name) {
   YAML::Node config = YAML::LoadFile(level_path.string());
   std::vector<Obstacle> obstacles{};
   for (const auto &test : config["obstacles"]) {
-    obstacles.push_back(Obstacle(test["x"].as<int>(), test["y"].as<int>(), test["width"].as<int>(), test["height"].as<int>()));
+    Obstacle parsed_obstacle =
+        Obstacle(test["x"].as<int>(), test["y"].as<int>(), test["width"].as<int>(), test["height"].as<int>());
+    obstacles.push_back(parsed_obstacle);
   }
-  
+
   return Level(level_name, obstacles);
 }

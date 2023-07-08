@@ -1,10 +1,10 @@
-#include <memory>
+#include "LevelFactory.hpp"
+#include "ObstaclesDrawer.hpp"
 
 #include <SDL2/SDL.h>
 #include <spdlog/spdlog.h>
 
-#include "LevelFactory.hpp"
-#include "ObstaclesDrawer.hpp"
+#include <memory>
 
 int main(int, char **) {
 
