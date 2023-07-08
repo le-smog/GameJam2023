@@ -2,15 +2,6 @@ add_executable(game
   "main.cpp"
 )
 
-set_target_properties(game
-  PROPERTIES
-  CXX_STANDARD 23
-  CXX_STANDARD_REQUIRED OFF
-  CXX_EXTENSIONS OFF
-  INTERPROCEDURAL_OPTIMIZATION "${USE_LTO}"
-  POSITION_INDEPENDENT_CODE "${USE_PIE}"
-)
-
 find_package(fmt CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
@@ -24,6 +15,8 @@ target_link_libraries(game
   spdlog::spdlog
   yaml-cpp
 )
+
+target_set_project_options(game)
 
 add_custom_command(
   TARGET game
