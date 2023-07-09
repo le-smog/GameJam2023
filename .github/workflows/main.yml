@@ -127,3 +127,10 @@ jobs:
           name: ${{ matrix.platform.package-name }}
           path: ${{ github.workspace }}/out
           if-no-files-found: error
+
+      - name: Upload failure logs
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: failure-logs-${{matrix.platform.package-name}}
+          path: build
