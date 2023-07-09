@@ -1,7 +1,9 @@
 #include "InputHandler.hpp"
 
-static Command keysym_to_command(SDL_Keysym keysym) {
-  switch (keysym.scancode) {
+#include <array>
+
+static Command scancode_to_command(SDL_Scancode scancode) {
+  switch (scancode) {
   case SDL_SCANCODE_W:
   case SDL_SCANCODE_UP:
   case SDL_SCANCODE_SPACE:
@@ -16,20 +18,30 @@ static Command keysym_to_command(SDL_Keysym keysym) {
   return Command::CMD_NONE;
 }
 
+static std::vector<Command> get_commands_from_keystates() {
+  constexpr std::array keys_to_check{SDL_SCANCODE_W,    SDL_SCANCODE_A,     SDL_SCANCODE_D,    SDL_SCANCODE_UP,
+                                     SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT, SDL_SCANCODE_SPACE};
+  std::vector<Command> commands;
+  const Uint8 *key_states = SDL_GetKeyboardState(nullptr);
+  for (SDL_Scancode code : keys_to_check) {
+    if (key_states[code]) {
+      Command cmd = scancode_to_command(code);
+      commands.push_back(cmd);
+    }
+  }
+  return commands;
+}
+
 std::vector<Command> InputHandler::poll_commands() {
   SDL_Event ev;
-  std::vector<Command> commands;
   while (SDL_PollEvent(&ev)) {
     switch (ev.type) {
     case SDL_QUIT:
       keep_running = false;
       break;
-    case SDL_KEYDOWN:
-      Command cmd = keysym_to_command(ev.key.keysym);
-      commands.push_back(cmd);
-      break;
     }
   }
+  std::vector<Command> commands = get_commands_from_keystates();
   return commands;
 }
 

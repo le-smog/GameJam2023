@@ -41,8 +41,9 @@ int main(int, char **) {
   InputHandler input_handler;
   while (input_handler.should_continue()) {
     std::vector<Command> commands = input_handler.poll_commands();
+
     Uint64 elapsed = SDL_GetTicks64() - start_time;
-    player.update(obstacles, elapsed);
+    player.update(obstacles, commands, elapsed);
     start_time = SDL_GetTicks64();
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
