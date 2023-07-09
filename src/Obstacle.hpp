@@ -9,5 +9,5 @@ private:
 
 public:
   Obstacle(int x, int y, int width, int height);
-  SDL_Rect to_SDL_rect();
+  SDL_Rect to_SDL_rect() const;
 };
