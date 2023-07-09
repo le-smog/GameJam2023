@@ -29,7 +29,7 @@ function(target_set_project_options TARGET)
 
   if(ENABLE_ASAN)
     if(MSVC)
-      target_compile_options(${TARGET} PRIVATE "/fsanitize=address")
+      target_compile_options(${TARGET} PRIVATE "/fsanitize=address" "/Zi")
       target_link_options(${TARGET} PRIVATE "/fsanitize=address")
     else()
       target_compile_options(${TARGET} PRIVATE "-fsanitize=address" "-fno-omit-frame-pointer")
