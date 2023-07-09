@@ -57,11 +57,8 @@ Level LevelFactory::make_level(std::string_view level_name) {
   }
 
   YAML::Node level_data = YAML::LoadFile(level_path.string());
-  if (!level_data["obstacles"]) {
-    spdlog::critical("{}", "Missing obstacles component of the level data");
-    std::exit(4);
-  }
-  YAML::Node obstacles_data = level_data["obstacles"];
+  assert_key_exists(level_data, "obstacles");
+  const YAML::Node &obstacles_data = level_data["obstacles"];
 
   std::vector<Obstacle> obstacles{};
   for (const auto &obstacle : obstacles_data) {
@@ -69,7 +66,11 @@ Level LevelFactory::make_level(std::string_view level_name) {
     obstacles.push_back(parsed_obstacle);
   }
 
-  Player player = Player(level_data["player"]["x"].as<int>(), level_data["player"]["x"].as<int>(), 5, 20);
+  assert_key_exists(level_data, "player");
+  const YAML::Node &player_data = level_data["player"];
+  assert_key_exists(player_data, "x");
+  assert_key_exists(player_data, "y");
+  Player player = Player(player_data["x"].as<int>(), player_data["y"].as<int>(), 20, 20);
 
   return Level(level_name, player, obstacles);
 }
