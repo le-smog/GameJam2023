@@ -9,11 +9,6 @@ add_executable(game
   "Drawer.cpp"
 )
 
-find_package(fmt CONFIG REQUIRED)
-find_package(SDL2 CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
-
 target_link_libraries(game
   PRIVATE
   SDL2::SDL2main
