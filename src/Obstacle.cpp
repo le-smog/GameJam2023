@@ -1,5 +1,5 @@
 #include "Obstacle.hpp"
 
-Obstacle::Obstacle(int x, int y, int width, int height) : m_x(x), m_y(y), m_width(width), m_height(height) {}
+Obstacle::Obstacle(float x, float y, float width, float height) : m_x(x), m_y(y), m_width(width), m_height(height) {}
 
-SDL_Rect Obstacle::to_SDL_rect() const { return SDL_Rect{m_x, m_y, m_width, m_height}; }
+SDL_FRect Obstacle::to_SDL_frect() const { return SDL_FRect{m_x, m_y, m_width, m_height}; }

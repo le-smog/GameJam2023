@@ -20,20 +20,31 @@ void assert_key_exists(const YAML::Node &node, const std::string &key) {
   }
 }
 
-static Obstacle parse_obstacle_from_node(const YAML::Node &yaml_obstacle) {
-  assert_key_exists(yaml_obstacle, "x");
-  int x = yaml_obstacle["x"].as<int>();
+static Obstacle parse_obstacle_from_node(const YAML::Node &obstacle_data) {
+  assert_key_exists(obstacle_data, "x");
+  float x = obstacle_data["x"].as<float>();
 
-  assert_key_exists(yaml_obstacle, "y");
-  int y = yaml_obstacle["y"].as<int>();
+  assert_key_exists(obstacle_data, "y");
+  float y = obstacle_data["y"].as<float>();
 
-  assert_key_exists(yaml_obstacle, "width");
-  int width = yaml_obstacle["width"].as<int>();
+  assert_key_exists(obstacle_data, "width");
+  float width = obstacle_data["width"].as<float>();
 
-  assert_key_exists(yaml_obstacle, "height");
-  int height = yaml_obstacle["height"].as<int>();
+  assert_key_exists(obstacle_data, "height");
+  float height = obstacle_data["height"].as<float>();
 
   return Obstacle(x, y, width, height);
+}
+
+static Player parse_player_from_node(const YAML::Node &player_data) {
+  assert_key_exists(player_data, "x");
+  float player_x = player_data["x"].as<float>();
+
+  assert_key_exists(player_data, "y");
+  float player_y = player_data["y"].as<float>();
+
+  static constexpr float DEFAULT_PLAYER_SIZE = 20.f;
+  return Player(player_x, player_y, DEFAULT_PLAYER_SIZE, DEFAULT_PLAYER_SIZE);
 }
 
 LevelFactory::LevelFactory(std::string_view levels_path) : m_levels_path(BASE_PATH.get()) {
@@ -68,9 +79,7 @@ Level LevelFactory::make_level(std::string_view level_name) {
 
   assert_key_exists(level_data, "player");
   const YAML::Node &player_data = level_data["player"];
-  assert_key_exists(player_data, "x");
-  assert_key_exists(player_data, "y");
-  Player player = Player(player_data["x"].as<int>(), player_data["y"].as<int>(), 20, 20);
+  Player player = parse_player_from_node(player_data);
 
   return Level(level_name, player, obstacles);
 }

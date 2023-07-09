@@ -2,10 +2,10 @@
 
 #include <SDL2/SDL.h>
 
-class Drawer
-{
+class Drawer {
 protected:
-    SDL_Renderer* m_renderer;
+  SDL_Renderer *m_renderer;
+
 public:
-    Drawer(SDL_Renderer* renderer);
+  Drawer(SDL_Renderer *renderer);
 };

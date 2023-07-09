@@ -12,5 +12,5 @@ private:
 
 public:
   ObstaclesDrawer(SDL_Renderer *renderer);
-  void drawObstacle(std::vector<Obstacle> obstacles);
+  void drawObstacle(const std::vector<Obstacle> &obstacles) const;
 };
