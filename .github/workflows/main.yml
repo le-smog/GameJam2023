@@ -60,6 +60,7 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=out \
             -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.platform.triplet }} \
+            -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON \
             -DENABLE_LTO=OFF \
             ${{ matrix.platform.cmake-args }}
 
