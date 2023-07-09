@@ -1,6 +1,7 @@
 #include "LevelFactory.hpp"
 
 #include "Obstacle.hpp"
+#include "Player.hpp"
 
 #include <SDL2/SDL.h>
 #include <fmt/std.h>
@@ -68,5 +69,7 @@ Level LevelFactory::make_level(std::string_view level_name) {
     obstacles.push_back(parsed_obstacle);
   }
 
-  return Level(level_name, obstacles);
+  Player player = Player(level_data["player"]["x"].as<int>(), level_data["player"]["x"].as<int>(), 5, 20);
+
+  return Level(level_name, player, obstacles);
 }
