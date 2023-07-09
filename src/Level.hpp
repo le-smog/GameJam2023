@@ -15,4 +15,5 @@ private:
 public:
   Level(std::string_view level_name, Player &player, std::vector<Obstacle> &obstacles);
   const std::vector<Obstacle> &getObstacles();
+  const Player &getPlayer();
 };

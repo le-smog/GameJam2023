@@ -1,5 +1,6 @@
 #include "LevelFactory.hpp"
 #include "ObstaclesDrawer.hpp"
+#include "PlayerDrawer.hpp"
 
 #include <SDL2/SDL.h>
 #include <spdlog/spdlog.h>
@@ -30,6 +31,7 @@ int main(int, char **) {
   }
 
   ObstaclesDrawer obstacle_drawer = ObstaclesDrawer(renderer);
+  PlayerDrawer player_drawer = PlayerDrawer(renderer);
 
   bool should_continue = true;
   while (should_continue) {
@@ -46,6 +48,7 @@ int main(int, char **) {
     SDL_RenderClear(renderer);
 
     obstacle_drawer.drawObstacle(test.getObstacles());
+    player_drawer.drawPlayer(test.getPlayer());
 
     SDL_RenderPresent(renderer);
   }
