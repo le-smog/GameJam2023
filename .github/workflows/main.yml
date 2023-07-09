@@ -4,99 +4,47 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    name: ${{ matrix.platform.name }} - ${{ matrix.config }}
+    name: ${{ matrix.platform.name }}
     runs-on: ${{ matrix.platform.os }}
     defaults:
       run:
-        shell: ${{ matrix.platform.shell }}
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
         platform:
           - {
-              name: Msys2,
+              name: Windows,
               os: windows-latest,
-              shell: "msys2 {0}",
-              msystem: ucrt64,
-              msys-env: mingw-w64-ucrt-x86_64,
-              package-name: x86_64-w64-mingw32
+              triplet: x64-windows-release,
+              package-name: x86_64-pc-windows-msvc
             }
           - {
               name: Ubuntu,
               os: ubuntu-latest,
-              shell: bash,
+              triplet: x64-linux-release,
               package-name: x86_64-linux-gnu
             }
           - {
-              name: macOS,
+              name: macOS x64,
               os: macos-latest,
-              shell: bash,
+              triplet: x64-osx-release,
+              cmake-args: "-DCMAKE_OSX_ARCHITECTURES=x86_64",
               package-name: x86_64-apple-darwin
             }
-        config:
-          - Release
-          - Debug
+          - {
+              name: macOS aarch64,
+              os: macos-latest,
+              triplet: arm64-osx-release,
+              cmake-args: "-DCMAKE_OSX_ARCHITECTURES=arm64",
+              package-name: aarch64-apple-darwin
+            }
     steps:
-      - name: Set up Msys2
-        if: matrix.platform.shell == 'msys2 {0}'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: ${{ matrix.platform.msystem }}
-          install: >-
-            ${{ matrix.platform.msys-env }}-cmake
-            ${{ matrix.platform.msys-env }}-fmt
-            ${{ matrix.platform.msys-env }}-ninja
-            ${{ matrix.platform.msys-env }}-SDL2
-            ${{ matrix.platform.msys-env }}-spdlog
-            ${{ matrix.platform.msys-env }}-toolchain
-            ${{ matrix.platform.msys-env }}-yaml-cpp
-
-      - name: Set up Linux dependencies
-        if: runner.os == 'Linux'
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            bash \
-            cmake \
-            pkgconf \
-            ninja-build \
-            libsdl2-dev  \
-            libyaml-cpp-dev \
-            libspdlog-dev
-
-      # ubuntu-latest ships a version too old for this project
-      - name: Checkout fmt 10 (Linux)
-        if: runner.os == 'Linux'
-        uses: actions/checkout@v3
-        with:
-          repository: fmtlib/fmt
-          ref: 10.0.0
-          path: ${{ github.workspace }}/.fmt-src
-
-      - name: Install fmt 10 (Linux)
-        if: runner.os == 'Linux'
-        working-directory: ${{ github.workspace }}/.fmt-src
-        run: |
-          cmake \
-            -S. \
-            -Bbuild \
-            -GNinja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.deps \
-            -DFMT_TEST=OFF \
-            -DFMT_DOC=OFF
-          cmake --build build --config Release
-          cmake --install build --config Release
-
-      - name: Setup Macos dependencies
-        if: runner.os == 'macOS'
-        run: |
-          brew install --formula \
-            cmake \
+          vcpkg install \
+            --triplet=${{ matrix.platform.triplet }} \
             fmt \
-            ninja \
-            pkg-config \
             sdl2 \
             spdlog \
             yaml-cpp
@@ -108,20 +56,20 @@ jobs:
           cmake \
             -S. \
             -Bbuild \
-            -GNinja \
-            -DCMAKE_BUILD_TYPE=${{ matrix.config }} \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=out \
-            -DCMAKE_PREFIX_PATH=${{ github.workspace }}/.deps \
-            -DENABLE_LTO=OFF
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.platform.triplet }} \
+            -DENABLE_LTO=OFF \
+            ${{ matrix.platform.cmake-args }}
 
       - name: Build
-        run: cmake --build build --config ${{ matrix.config }}
+        run: cmake --build build --config Release
 
       - name: Install
-        run: cmake --install build --config ${{ matrix.config }}
+        run: cmake --install build --config Release
 
       - name: Upload the result
-        if: ${{ matrix.config }} == 'Release'
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform.package-name }}
