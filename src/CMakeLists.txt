@@ -7,6 +7,7 @@ add_executable(game
   "Player.cpp"
   "PlayerDrawer.cpp"
   "Drawer.cpp"
+  "InputHandler.cpp"
 )
 
 target_link_libraries(game

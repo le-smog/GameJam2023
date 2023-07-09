@@ -1,3 +1,4 @@
+#include "InputHandler.hpp"
 #include "LevelFactory.hpp"
 #include "ObstaclesDrawer.hpp"
 #include "PlayerDrawer.hpp"
@@ -37,16 +38,9 @@ int main(int, char **) {
   Player &player = test.getPlayer();
 
   Uint64 start_time = SDL_GetTicks64();
-  bool should_continue = true;
-  while (should_continue) {
-    SDL_Event ev;
-    while (SDL_PollEvent(&ev)) {
-      switch (ev.type) {
-      case SDL_QUIT:
-        should_continue = false;
-        break;
-      }
-    }
+  InputHandler input_handler;
+  while (input_handler.should_continue()) {
+    std::vector<Command> commands = input_handler.poll_commands();
     Uint64 elapsed = SDL_GetTicks64() - start_time;
     player.update(obstacles, elapsed);
     start_time = SDL_GetTicks64();
