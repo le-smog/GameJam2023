@@ -84,12 +84,10 @@ jobs:
             -GNinja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.deps \
-            -DFMT_CMAKE_DIR=share/fmt \
             -DFMT_TEST=OFF \
             -DFMT_DOC=OFF
           cmake --build build --config Release
           cmake --install build --config Release
-          echo "fmt_DIR=${{ github.workspace }}/.deps/share/fmt" >> $GITHUB_ENV
 
       - name: Setup Macos dependencies
         if: runner.os == 'macOS'
@@ -108,11 +106,13 @@ jobs:
       - name: Configure
         run: |
           cmake \
-            -S . \
-            -B build \
-            -G Ninja \
-            -D CMAKE_INSTAL_PREFIX=${{  github.workspace }}/out \
-            -D CMAKE_BUILD_TYPE=${{ matrix.config }}
+            -S. \
+            -Bbuild \
+            -GNinja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config }} \
+            -DCMAKE_INSTALL_PREFIX=out \
+            -DCMAKE_PREFIX_PATH=${{ github.workspace }}/.deps \
+            -DENABLE_LTO=OFF
 
       - name: Build
         run: cmake --build build --config ${{ matrix.config }}
