@@ -33,6 +33,10 @@ int main(int, char **) {
   ObstaclesDrawer obstacle_drawer = ObstaclesDrawer(renderer);
   PlayerDrawer player_drawer = PlayerDrawer(renderer);
 
+  auto &obstacles = test.getObstacles();
+  Player &player = test.getPlayer();
+
+  Uint64 start_time = SDL_GetTicks64();
   bool should_continue = true;
   while (should_continue) {
     SDL_Event ev;
@@ -43,12 +47,15 @@ int main(int, char **) {
         break;
       }
     }
+    Uint64 elapsed = SDL_GetTicks64() - start_time;
+    player.update(obstacles, elapsed);
+    start_time = SDL_GetTicks64();
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-    obstacle_drawer.drawObstacle(test.getObstacles());
-    player_drawer.drawPlayer(test.getPlayer());
+    obstacle_drawer.drawObstacle(obstacles);
+    player_drawer.drawPlayer(player);
 
     SDL_RenderPresent(renderer);
   }
