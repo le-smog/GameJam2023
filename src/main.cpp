@@ -34,6 +34,8 @@ int main(int, char **) {
     return 1;
   }
 
+  SDL_RenderSetLogicalSize(renderer, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
   ObstaclesDrawer obstacle_drawer = ObstaclesDrawer(renderer);
   PlayerDrawer player_drawer = PlayerDrawer(renderer);
 
