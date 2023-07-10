@@ -14,7 +14,7 @@ int main(int, char **) {
 
   Level test = level_factory.make_level("level1");
 
-  static constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO;
+  static constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER;
   if (SDL_Init(INIT_FLAGS) < 0) {
     spdlog::error("Unable to init SDL: {}", SDL_GetError());
     return 1;
