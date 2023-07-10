@@ -35,6 +35,16 @@ std::vector<Command> InputHandler::poll_commands() {
     case SDL_CONTROLLERDEVICEREMOVED:
       spdlog::warn("Controller disconnected");
       break;
+    case SDL_KEYDOWN:
+      if (ev.key.keysym.scancode == SDL_SCANCODE_ESCAPE && !ev.key.repeat) {
+        is_paused = !is_paused;
+      }
+      break;
+    case SDL_CONTROLLERBUTTONDOWN:
+      if (ev.cbutton.button == SDL_CONTROLLER_BUTTON_START) {
+        is_paused = !is_paused;
+      }
+      break;
     }
   }
   std::vector<Command> commands;
@@ -44,6 +54,8 @@ std::vector<Command> InputHandler::poll_commands() {
 }
 
 bool InputHandler::should_continue() const { return keep_running; }
+
+bool InputHandler::should_pause() const { return is_paused; }
 
 static SDL_GameController *try_open_controller(Sint32 controller_id) {
   SDL_GameController *result = SDL_GameControllerOpen(controller_id);

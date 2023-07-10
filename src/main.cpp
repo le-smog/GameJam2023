@@ -6,7 +6,10 @@
 #include <SDL2/SDL.h>
 #include <spdlog/spdlog.h>
 
+#include <array>
 #include <memory>
+
+void draw_pause_icon(SDL_Renderer *renderer);
 
 int main(int, char **) {
 
@@ -42,13 +45,18 @@ int main(int, char **) {
   while (input_handler.should_continue()) {
     std::vector<Command> commands = input_handler.poll_commands();
 
-    Uint64 elapsed = SDL_GetTicks64() - start_time;
-    player.update(obstacles, commands, elapsed);
+    if (!input_handler.should_pause()) {
+      Uint64 elapsed = SDL_GetTicks64() - start_time;
+      player.update(obstacles, commands, elapsed);
+    }
     start_time = SDL_GetTicks64();
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
+    if (input_handler.should_pause()) {
+      draw_pause_icon(renderer);
+    }
     obstacle_drawer.drawObstacle(obstacles);
     player_drawer.drawPlayer(player);
 
@@ -59,4 +67,10 @@ int main(int, char **) {
   SDL_DestroyWindow(window);
   SDL_Quit();
   return 0;
+}
+
+void draw_pause_icon(SDL_Renderer *renderer) {
+  std::array pause_rects{SDL_Rect{20, 20, 20, 80}, SDL_Rect{50, 20, 20, 80}};
+  SDL_SetRenderDrawColor(renderer, 150, 150, 150, SDL_ALPHA_OPAQUE);
+  SDL_RenderFillRects(renderer, pause_rects.data(), static_cast<int>(pause_rects.size()));
 }
